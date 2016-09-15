@@ -1,0 +1,86 @@
+#!/bin/bash
+#
+# Command line interface for uploading to Velo Hero <http://www.velohero.com/>
+#
+# See instructions at https://github.com/cyclenerd/veloheroup
+#
+
+set -e
+
+# script name
+PROG=$(basename $0)
+
+die()
+{
+  echo -e >&2 $PROG: "$@"
+  echo -e >&2 $PROG: "exiting."
+  exit 1
+}
+
+if [ ! -f "$HOME/.veloherouprc" ]; then
+    echo "To use the veloheroup script, please go to https://app.velohero.com/sso"
+    echo "and get yourself a private single sign-on key. That's the long string after private_key=."
+    echo "Then create a file ~/.veloherouprc containing"
+    echo "  VELOHEROUP_SSO_KEY=[insert your own]"
+    echo "Important: Do not use spaces!"
+    exit
+fi
+
+. ~/.veloherouprc
+
+if [ $# -ne 1 ]; then
+    echo "Usage: veloheroup file"
+    exit 1
+fi
+
+# Check file type
+filename=$(basename "$1")
+suffix="${filename##*.}"
+datatype=""
+if [ "$suffix" = "fit" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "tcx" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "gpx" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "srm" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "hrm" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "pwx" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "slf" ]; then
+    datatype="$suffix"
+fi
+if [ "$suffix" = "slm" ]; then
+    datatype="$suffix"
+fi
+if [ "$datatype" = "" ]; then
+    echo "Unknown file type $suffix"
+    exit 1
+fi
+
+# Test whether file exists
+[ -f "$1" ] || die "input file $1 not found."
+
+# Get authorization code
+if [ "VELOHEROUP_SSO_KEY" = "" ]; then
+    echo "To use the veloheroup script, please go to https://app.velohero.com/sso"
+    echo "and get yourself a private single sign-on key. That's the long string after private_key=."
+    echo "Then create a file ~/.veloherouprc containing"
+    echo "  VELOHEROUP_SSO_KEY=[insert your own]"
+    echo "Important: Do not use spaces!"
+    exit 1
+fi
+
+# Upload file
+curl -X POST https://app.velohero.com/upload/file -F file=@"$1" -F sso="$VELOHEROUP_SSO_KEY" -F view="json" -o /tmp/veloheroup.output
+cat /tmp/veloheroup.output
+rm /tmp/veloheroup.output
+echo
