@@ -70,7 +70,7 @@ fi
 [ -f "$1" ] || die "input file $1 not found."
 
 # Get authorization code
-if [ "VELOHEROUP_SSO_KEY" = "" ]; then
+if [ -z "VELOHEROUP_SSO_KEY" ]; then
     echo "To use the veloheroup script, please go to https://app.velohero.com/sso"
     echo "and get yourself a private single sign-on key. That's the long string after private_key=."
     echo "Then create a file ~/.veloherouprc containing"
@@ -80,7 +80,7 @@ if [ "VELOHEROUP_SSO_KEY" = "" ]; then
 fi
 
 # Upload file
-curl -X POST https://app.velohero.com/upload/file -F file=@"$1" -F sso="$VELOHEROUP_SSO_KEY" -F view="json" -o /tmp/veloheroup.output
+curl -X POST https://app.velohero.com/upload/file -F file=@"$1" -F sso="$VELOHEROUP_SSO_KEY" -F view="json" -o /tmp/veloheroup.output --fail
 cat /tmp/veloheroup.output
 rm /tmp/veloheroup.output
 echo

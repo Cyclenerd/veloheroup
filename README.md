@@ -5,6 +5,8 @@ Upload FIT, TCX, GPX, SRM, HRM, PWX, SLF and SLM files to [Velo Hero](http://www
 * POSIX shell
 * cURL
 
+Most Linux distributions and Mac OS X meet the requirements.
+
 ## Setup
 1. Sign up at https://app.velohero.com/sso
 2. Get yourself a private single sign-on key. That's the long string after private_key=.
@@ -24,4 +26,4 @@ Use find and xargs to upload everything:
 
 ## More info
 
-Inspired by stravaup from inspired by mpolla https://github.com/mpolla/stravaup
+Inspired by stravaup https://github.com/mpolla/stravaup
