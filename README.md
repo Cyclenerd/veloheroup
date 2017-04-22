@@ -6,8 +6,8 @@ Upload FIT, TCX, GPX, SRM, HRM, PWX, SLF and SLM files to [Velo Hero](http://www
 
 ## Prerequisites
 
-* POSIX shell
-* cURL
+* Bash shell
+* curl
 
 Most Linux distributions and macOS meet the requirements.
 
@@ -15,9 +15,9 @@ Most Linux distributions and macOS meet the requirements.
 
 1. Sign up at https://app.velohero.com/sso
 2. Get yourself a private single sign-on key. That's the long string.
-3. Create a `.veloherorc` file in your home directory:
+3. Create a `.veloherorc` file in your home directory. Save the SSO key in this file:
 ~~~
-VELOHERO_SSO_KEY=FIXME
+VELOHERO_SSO_KEY=[insert your own]
 ~~~
 
 ## Usage
