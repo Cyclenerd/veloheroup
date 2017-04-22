@@ -29,12 +29,17 @@ function echo_sso_key_help {
 	exit 1
 }
 
-# exit_with_failure() outputs a message before exiting the script.
 function exit_with_failure() {
 	echo
 	echo "FAILURE: $1"
 	echo
 	exit 9
+}
+
+function check_sso_login() {
+	if ! curl "https://app.velohero.com/sso" -F sso="$VELOHERO_SSO_KEY" -F view="json" -o "/dev/null" --silent --fail; then
+		exit_with_failure "Login failed! Single Sign-on key not found or expired. Please get a new one."
+	fi
 }
 
 if [ ! -f "$HOME/.veloherorc" ]; then
@@ -86,6 +91,8 @@ fi
 
 # Get authorization code
 if [ "$VELOHERO_SSO_KEY" ]; then
+	# Check login
+	check_sso_login
 	# Upload file
 	curl -X POST "https://app.velohero.com/upload/file" -F file=@"$1" -F sso="$VELOHERO_SSO_KEY" -F view="txt"
 	echo
