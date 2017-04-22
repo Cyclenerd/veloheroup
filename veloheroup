@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 #
 # Command line interface for uploading to Velo Hero <http://www.velohero.com/>
 #
@@ -10,28 +11,42 @@ set -e
 # script name
 PROG=$(basename "$0")
 
-die()
-{
-  echo -e >&2 "$PROG": "$@"
-  echo -e >&2 "$PROG": "exiting."
-  exit 1
+function echo_sso_key_help {
+	echo
+	echo "To use the '$PROG' script, please go to https://app.velohero.com/sso"
+	echo "and get yourself a private single sign-on key. That's the long string."
+	echo
+	echo "Then create a file '$HOME/.veloherorc' containing"
+	echo
+	echo "----- snip -------------------------------------------------------------"
+	echo
+	echo "VELOHERO_SSO_KEY=[insert your own]"
+	echo
+	echo "----- snap -------------------------------------------------------------"
+	echo
+	echo "Important: Do not use spaces!"
+	echo
+	exit 1
 }
 
-if [ ! -f "$HOME/.veloherouprc" ]; then
-    echo "To use the veloheroup script, please go to https://app.velohero.com/sso"
-    echo "and get yourself a private single sign-on key. That's the long string after private_key=."
-    echo "Then create a file ~/.veloherouprc containing"
-    echo "  VELOHEROUP_SSO_KEY=[insert your own]"
-    echo "Important: Do not use spaces!"
-    exit
+# exit_with_failure() outputs a message before exiting the script.
+function exit_with_failure() {
+	echo
+	echo "FAILURE: $1"
+	echo
+	exit 9
+}
+
+if [ ! -f "$HOME/.veloherorc" ]; then
+	echo_sso_key_help
 fi
 
-# shellcheck source=/Users/nils/.veloherouprc
-source "$HOME/.veloherouprc"
+# shellcheck source=/Users/nils/.veloherorc
+source "$HOME/.veloherorc"
 
 if [ $# -ne 1 ]; then
-    echo "Usage: veloheroup file"
-    exit 1
+	echo "Usage: $PROG <file>"
+	exit 1
 fi
 
 # Check file type
@@ -39,50 +54,42 @@ filename=$(basename "$1")
 suffix="${filename##*.}"
 datatype=""
 if [ "$suffix" = "fit" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "tcx" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "gpx" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "srm" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "hrm" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "pwx" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "slf" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$suffix" = "slm" ]; then
-    datatype="$suffix"
+	datatype="$suffix"
 fi
 if [ "$datatype" = "" ]; then
-    echo "Unknown file type $suffix"
-    exit 1
+	exit_with_failure "Unknown file type $suffix"
 fi
 
 # Test whether file exists
-[ -f "$1" ] || die "input file $1 not found."
+[ -f "$1" ] || exit_with_failure "Input file '$1' not found."
 
 # Get authorization code
-if [ "$VELOHEROUP_SSO_KEY" ]; then
+if [ "$VELOHERO_SSO_KEY" ]; then
 	# Upload file
-	curl -X POST https://app.velohero.com/upload/file -F file=@"$1" -F sso="$VELOHEROUP_SSO_KEY" -F view="json" -o /tmp/veloheroup.output --fail
-	cat /tmp/veloheroup.output
-	rm /tmp/veloheroup.output
+	curl -X POST "https://app.velohero.com/upload/file" -F file=@"$1" -F sso="$VELOHERO_SSO_KEY" -F view="txt"
 	echo
 else
-	echo "To use the veloheroup script, please go to https://app.velohero.com/sso"
-	echo "and get yourself a private single sign-on key. That's the long string after private_key=."
-	echo "Then create a file ~/.veloherouprc containing"
-	echo "  VELOHEROUP_SSO_KEY=[insert your own]"
-	echo "Important: Do not use spaces!"
-	exit 1
+	echo_sso_key_help
 fi
 
