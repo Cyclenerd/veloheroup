@@ -96,6 +96,7 @@ if [ "$VELOHERO_SSO_KEY" ]; then
 	# Check login
 	check_sso_login
 	# Upload file
+	echo "Upload file. Please wait..."
 	curl -X POST "https://app.velohero.com/upload/file" -F file=@"$1" -F sso="$VELOHERO_SSO_KEY" -F view="txt" -A "$MY_USERAGENT"
 	echo
 else
