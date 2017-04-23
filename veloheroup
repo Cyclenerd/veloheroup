@@ -10,6 +10,8 @@ set -e
 
 # script name
 PROG=$(basename "$0")
+# User-Agent string
+MY_USERAGENT="veloheroup/1.0"
 
 function echo_sso_key_help {
 	echo
@@ -37,7 +39,7 @@ function exit_with_failure() {
 }
 
 function check_sso_login() {
-	if ! curl "https://app.velohero.com/sso" -F sso="$VELOHERO_SSO_KEY" -F view="json" -o "/dev/null" --silent --fail; then
+	if ! curl "https://app.velohero.com/sso" -F sso="$VELOHERO_SSO_KEY" -F view="json" -o "/dev/null" --silent --fail -A "$MY_USERAGENT" --compressed; then
 		exit_with_failure "Login failed! Single Sign-on key not found or expired. Please get a new one."
 	fi
 }
@@ -83,7 +85,7 @@ if [ "$suffix" = "slm" ]; then
 	datatype="$suffix"
 fi
 if [ "$datatype" = "" ]; then
-	exit_with_failure "Unknown file type $suffix"
+	exit_with_failure "Unknown file type '$suffix'"
 fi
 
 # Test whether file exists
@@ -94,7 +96,7 @@ if [ "$VELOHERO_SSO_KEY" ]; then
 	# Check login
 	check_sso_login
 	# Upload file
-	curl -X POST "https://app.velohero.com/upload/file" -F file=@"$1" -F sso="$VELOHERO_SSO_KEY" -F view="txt"
+	curl -X POST "https://app.velohero.com/upload/file" -F file=@"$1" -F sso="$VELOHERO_SSO_KEY" -F view="txt" -A "$MY_USERAGENT"
 	echo
 else
 	echo_sso_key_help
