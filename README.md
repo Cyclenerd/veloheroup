@@ -1,6 +1,6 @@
 # veloheroup
 
-Upload FIT, TCX, GPX, SRM, HRM, PWX, SLF and SLM files to [Velo Hero](http://www.velohero.com/) from the command line.
+Upload FIT, TCX, GPX, SRM, HRM, PWX, SLF and SLM files to [Velo Hero](https://www.velohero.com/) from the command line.
 
 ![Velo Hero Logo](https://www.velohero.com/static/touchicon.png)
 
