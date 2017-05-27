@@ -61,7 +61,7 @@ function success_notification() {
 # Other helpers
 #####################################################################
 
-# check_sso_login() check the login
+# check_sso_login() checks the login
 function check_sso_login() {
 	if ! curl "https://app.velohero.com/sso" -F sso="$VELOHERO_SSO_KEY" -F view="json" -o "/dev/null" --silent --fail -A "$MY_USERAGENT" --compressed; then
 		exit_with_failure "Login failed! Single Sign-on key not found or expired. Please get a new one."
